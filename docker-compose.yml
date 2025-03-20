@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  java-app:
+    image: feelscodeman/javacodetest:0.0.1-SNAPSHOT
+    ports:
+      - "8080:8080"
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=nev123
+      - DATABASE_NAME=jctestdb
+    depends_on:
+      db:
+        condition:
+          service_healthy
+
+  db:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: jctestdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: nev123
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d jctestdb"]
+      interval: 2s
+      timeout: 5s
+      retries: 5
